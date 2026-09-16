@@ -1,0 +1,50 @@
+name: XAU-AI Bot
+
+on:
+  schedule:
+    # cek sinyal FVG tiap 5 menit
+    - cron: "*/5 * * * *"
+    # cek news yang baru rilis tiap 10 menit
+    - cron: "*/10 * * * *"
+    # ringkasan fundamental harian jam 07:00 WIB (00:00 UTC)
+    - cron: "0 0 * * *"
+  workflow_dispatch:   # supaya bisa dijalankan manual dari tab Actions
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Tentukan mode berdasarkan jadwal
+        id: mode
+        run: |
+          cron="${{ github.event.schedule }}"
+          if [ "$cron" = "*/5 * * * *" ]; then echo "mode=signal" >> $GITHUB_OUTPUT
+          elif [ "$cron" = "*/10 * * * *" ]; then echo "mode=news" >> $GITHUB_OUTPUT
+          elif [ "$cron" = "0 0 * * *" ]; then echo "mode=daily" >> $GITHUB_OUTPUT
+          else echo "mode=signal" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Jalankan bot
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+        run: python main.py ${{ steps.mode.outputs.mode }}
+
+      - name: Simpan state (commit balik ke repo)
+        run: |
+          git config user.name "xau-ai-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add state.json || true
+          git diff --staged --quiet || git commit -m "update state [skip ci]"
+          git push || true
