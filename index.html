@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XAU/USD — Sinyal News</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #E8E2D4;
+    --surface: #F5F1E6;
+    --surface-2: #EDE7D8;
+    --ink: #211D17;
+    --ink-muted: #6B6355;
+    --line: #C9C0AC;
+    --gold: #8A6112;
+    --gold-strong: #6B4B0E;
+    --buy: #3E6B4A;
+    --buy-bg: #DDE7DE;
+    --sell: #8C3B30;
+    --sell-bg: #ECDBD6;
+    --neutral: #6B6355;
+    --neutral-bg: #E4DECF;
+    --warn: #9A6B1E;
+    --warn-bg: #EFE1C4;
+    --focus: #8A6112;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1B1815;
+      --surface: #232019;
+      --surface-2: #2A261E;
+      --ink: #EDE6D6;
+      --ink-muted: #9C9184;
+      --line: #3B362C;
+      --gold: #C79A3F;
+      --gold-strong: #E0B354;
+      --buy: #7FAE8C;
+      --buy-bg: #253128;
+      --sell: #C77D6E;
+      --sell-bg: #33241F;
+      --neutral: #9C9184;
+      --neutral-bg: #2A261E;
+      --warn: #D9A64E;
+      --warn-bg: #33291A;
+      --focus: #C79A3F;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #1B1815;
+    --surface: #232019;
+    --surface-2: #2A261E;
+    --ink: #EDE6D6;
+    --ink-muted: #9C9184;
+    --line: #3B362C;
+    --gold: #C79A3F;
+    --gold-strong: #E0B354;
+    --buy: #7FAE8C;
+    --buy-bg: #253128;
+    --sell: #C77D6E;
+    --sell-bg: #33241F;
+    --neutral: #9C9184;
+    --neutral-bg: #2A261E;
+    --warn: #D9A64E;
+    --warn-bg: #33291A;
+    --focus: #C79A3F;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+    line-height: 1.5;
+    padding: 28px 16px 64px;
+  }
+
+  .wrap { max-width: 720px; margin: 0 auto; }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 14px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin: 0;
+    color: var(--ink);
+  }
+
+  h1 span { color: var(--gold); }
+
+  .subtitle {
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+  }
+
+  section {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 18px;
+  }
+
+  .section-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0 0 14px;
+    color: var(--ink);
+  }
+
+  .disclaimer-box {
+    background: var(--warn-bg);
+    border: 1px solid var(--warn);
+    border-radius: 4px;
+    padding: 12px 14px;
+    font-size: 0.78rem;
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+
+  .disclaimer-box strong { color: var(--warn); }
+
+  /* Signal hero */
+  .signal-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .signal-face {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .signal-word {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 700;
+    font-size: 2.6rem;
+    letter-spacing: -0.01em;
+    transition: color 0.2s ease;
+  }
+
+  .signal-word.buy { color: var(--buy); }
+  .signal-word.sell { color: var(--sell); }
+  .signal-word.neutral { color: var(--neutral); }
+
+  .spike-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--warn);
+    background: var(--warn-bg);
+    border: 1px solid var(--warn);
+    border-radius: 99px;
+    padding: 3px 10px;
+    display: none;
+    align-self: center;
+  }
+
+  .spike-badge.show { display: inline-block; }
+
+  .signal-meta { font-size: 0.85rem; color: var(--ink-muted); }
+  .signal-meta strong { color: var(--ink); font-weight: 600; }
+
+  .confidence-track {
+    height: 8px;
+    background: var(--surface-2);
+    border-radius: 99px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+
+  .confidence-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--gold);
+    transition: width 0.3s ease, background 0.3s ease;
+  }
+
+  .confidence-fill.buy { background: var(--buy); }
+  .confidence-fill.sell { background: var(--sell); }
+
+  .confidence-caption {
+    font-size: 0.68rem;
+    color: var(--ink-muted);
+  }
+
+  .reasoning {
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+    border-left: 2px solid var(--line);
+    padding-left: 12px;
+  }
+
+  .risk-note {
+    font-size: 0.78rem;
+    color: var(--sell);
+    background: var(--sell-bg);
+    border-radius: 4px;
+    padding: 10px 12px;
+    display: none;
+  }
+
+  .risk-note.show { display: block; }
+
+  /* Form */
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+
+  label { font-size: 0.72rem; color: var(--ink-muted); }
+
+  select, input[type="number"] {
+    font-family: inherit;
+    font-size: 0.9rem;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 9px 10px;
+    border-radius: 3px;
+  }
+
+  select:focus, input:focus, button:focus {
+    outline: 2px solid var(--focus);
+    outline-offset: 1px;
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    padding: 11px 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  button:hover { background: var(--gold-strong); }
+
+  button.ghost {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-muted);
+    width: auto;
+    padding: 5px 10px;
+    font-size: 0.7rem;
+    margin-top: 0;
+  }
+
+  button.ghost.profit:hover { border-color: var(--buy); color: var(--buy); }
+  button.ghost.loss:hover { border-color: var(--sell); color: var(--sell); }
+
+  .hint {
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    margin-top: 10px;
+  }
+
+  /* Calendar */
+  .cal-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    gap: 10px;
+  }
+
+  .cal-item:last-child { border-bottom: none; }
+
+  .cal-when {
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    min-width: 78px;
+  }
+
+  .cal-name { font-size: 0.85rem; flex: 1; }
+
+  .cal-impact {
+    font-size: 0.68rem;
+    padding: 2px 8px;
+    border-radius: 99px;
+    white-space: nowrap;
+  }
+
+  .impact-high { background: var(--sell-bg); color: var(--sell); }
+  .impact-med { background: var(--neutral-bg); color: var(--ink-muted); }
+
+  .edit-note {
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    margin-top: 14px;
+    border-top: 1px dashed var(--line);
+    padding-top: 12px;
+  }
+
+  .edit-note code {
+    background: var(--surface-2);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--gold);
+  }
+
+  /* History */
+  .winrate-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+  }
+
+  .winrate-bar strong {
+    color: var(--ink);
+    font-size: 1.1rem;
+    font-family: 'Source Serif 4', Georgia, serif;
+  }
+
+  .history-item {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.78rem;
+  }
+
+  .history-item:last-child { border-bottom: none; }
+
+  .history-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .history-signal { font-weight: 600; }
+  .history-signal.buy { color: var(--buy); }
+  .history-signal.sell { color: var(--sell); }
+  .history-signal.neutral { color: var(--neutral); }
+
+  .history-meta { color: var(--ink-muted); font-size: 0.72rem; }
+
+  .history-actions { display: flex; gap: 8px; align-items: center; }
+
+  .outcome-tag {
+    font-size: 0.68rem;
+    padding: 2px 8px;
+    border-radius: 99px;
+  }
+
+  .outcome-profit { background: var(--buy-bg); color: var(--buy); }
+  .outcome-loss { background: var(--sell-bg); color: var(--sell); }
+
+  .empty-state {
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    text-align: center;
+    padding: 12px 0;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--ink-muted);
+    margin-top: 26px;
+  }
+
+  @media (max-width: 480px) {
+    .field-row { grid-template-columns: 1fr; }
+    .signal-word { font-size: 2rem; }
+    .history-top { flex-direction: column; align-items: flex-start; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>XAU<span>/</span>USD — Sinyal News</h1>
+    <div class="subtitle">Analisa arah dari rilis data ekonomi</div>
+  </header>
+
+  <div class="disclaimer-box">
+    <strong>Tidak ada sinyal yang 100% akurat.</strong> Angka "keyakinan" di bawah mengukur seberapa besar penyimpangan data dari forecast, bukan probabilitas profit. Pasar bisa bergerak berlawanan meski data sesuai pola historis — selalu pakai stop loss.
+  </div>
+
+  <section class="signal-hero">
+    <div class="section-title">Sinyal saat ini</div>
+    <div class="signal-face">
+      <div class="signal-word neutral" id="signalWord">NETRAL</div>
+      <span class="spike-badge" id="spikeBadge">⚡ SPIKE</span>
+    </div>
+    <div class="confidence-track"><div class="confidence-fill" id="confidenceFill"></div></div>
+    <div class="signal-meta"><strong id="confidenceLabel">0%</strong> kekuatan sinyal &middot; <span id="signalIndicator">belum ada data dimasukkan</span></div>
+    <div class="confidence-caption">Kekuatan sinyal = besar surprise data × bobot dampak indikator. Maksimum dibatasi 90% secara sengaja — tidak pernah menyatakan kepastian.</div>
+    <div class="reasoning" id="reasoningText">Isi form rilis data ekonomi di bawah untuk melihat sinyal.</div>
+    <div class="risk-note" id="riskNote">Indikator high-impact: spread biasanya melebar dan slippage meningkat tajam dalam 1-5 menit setelah rilis. Pertimbangkan tunggu candle pertama close sebelum entry, atau perkecil lot.</div>
+  </section>
+
+  <section>
+    <div class="section-title">Input rilis data ekonomi</div>
+
+    <div class="field-row">
+      <div class="field" style="grid-column: 1 / -1;">
+        <label for="indicator">Indikator</label>
+        <select id="indicator">
+          <option value="nfp">Non-Farm Payrolls (NFP) — high</option>
+          <option value="unemployment">Unemployment Rate — high</option>
+          <option value="cpi">CPI y/y — high</option>
+          <option value="core_cpi">Core CPI — high</option>
+          <option value="ppi">PPI — medium</option>
+          <option value="retail_sales">Retail Sales — medium</option>
+          <option value="fed_rate">Fed Interest Rate Decision — high</option>
+          <option value="gdp">GDP — medium</option>
+          <option value="pmi">ISM Manufacturing PMI — medium</option>
+          <option value="jobless_claims">Initial Jobless Claims — low</option>
+          <option value="consumer_confidence">Consumer Confidence — low</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="actual">Aktual</label>
+        <input type="number" id="actual" step="any" placeholder="mis. 4.2">
+      </div>
+      <div class="field">
+        <label for="forecast">Forecast</label>
+        <input type="number" id="forecast" step="any" placeholder="mis. 3.9">
+      </div>
+    </div>
+
+    <button id="calcBtn">Hitung sinyal</button>
+    <div class="hint">Logika: surprise aktual vs forecast → arah USD → dibalik ke arah XAU/USD (gold biasanya berlawanan dengan kekuatan USD), dibobot sesuai dampak historis indikator tersebut.</div>
+  </section>
+
+  <section>
+    <div class="section-title">Riwayat sinyal</div>
+    <div class="winrate-bar">
+      <span>Win-rate dari sinyal yang ditandai</span>
+      <strong id="winrateLabel">— (0 ditandai)</strong>
+    </div>
+    <div id="historyList"><div class="empty-state">Belum ada riwayat. Hitung sinyal untuk mulai mencatat.</div></div>
+    <div class="edit-note">Riwayat tersimpan di browser ini saja (tidak sinkron antar perangkat). Tandai Profit/Loss setelah tahu hasilnya supaya win-rate kamu sendiri kebentuk dari waktu ke waktu — bukan klaim akurasi dari sistem ini.</div>
+  </section>
+
+  <section>
+    <div class="section-title">Kalender minggu ini</div>
+    <div id="calendarList"></div>
+    <div class="hint" id="calendarStatus">Memuat kalender…</div>
+    <div class="edit-note">
+      Data di atas rilis USD high & medium-impact minggu ini (16-18 Sep 2026 WIB), diambil manual dari data kalender ekonomi publik — Tradays tidak dipakai karena tidak punya API dan widget iframe-nya diblokir oleh keamanan halaman ini. Update <code>calendarData</code> di kode secara manual tiap minggu, atau minta saya ambilkan lagi.
+    </div>
+  </section>
+
+  <section>
+    <div class="section-title">Fed Interest Rate Decision hari ini</div>
+    <div class="hint">Perhatikan: Fed Interest Rate Decision minggu ini jatuh dini hari WIB (01:00 &amp; konferensi pers 01:30) — pergerakan besar biasanya terjadi di jam itu, bukan di jam AS siang hari.</div>
+  </section>
+
+  <footer>Alat bantu baca reaksi news &middot; bukan rekomendasi finansial &middot; tidak ada sinyal yang pasti benar</footer>
+</div>
+
+<script>
+  // Bobot dampak historis tiap indikator terhadap volatilitas USD (0-1).
+  const usdRules = {
+    nfp:                 { bullishOnBeat: true,  weight: 1.0 },
+    unemployment:        { bullishOnBeat: false, weight: 0.9 },
+    cpi:                 { bullishOnBeat: true,  weight: 1.0 },
+    core_cpi:            { bullishOnBeat: true,  weight: 0.95 },
+    ppi:                 { bullishOnBeat: true,  weight: 0.6 },
+    retail_sales:        { bullishOnBeat: true,  weight: 0.65 },
+    fed_rate:            { bullishOnBeat: true,  weight: 1.0 },
+    gdp:                 { bullishOnBeat: true,  weight: 0.7 },
+    pmi:                 { bullishOnBeat: true,  weight: 0.55 },
+    jobless_claims:      { bullishOnBeat: false, weight: 0.35 },
+    consumer_confidence: { bullishOnBeat: true,  weight: 0.35 }
+  };
+
+  const indicatorLabels = {
+    nfp: 'Non-Farm Payrolls',
+    unemployment: 'Unemployment Rate',
+    cpi: 'CPI',
+    core_cpi: 'Core CPI',
+    ppi: 'PPI',
+    retail_sales: 'Retail Sales',
+    fed_rate: 'Fed Interest Rate Decision',
+    gdp: 'GDP',
+    pmi: 'ISM Manufacturing PMI',
+    jobless_claims: 'Initial Jobless Claims',
+    consumer_confidence: 'Consumer Confidence'
+  };
+
+  const HIGH_IMPACT_THRESHOLD = 0.85;
+  const SPIKE_WEIGHT_THRESHOLD = 0.85;
+  const SPIKE_MAGNITUDE_THRESHOLD = 0.08;
+  const STORAGE_KEY = 'xau_signal_history_v1';
+
+  const signalWord = document.getElementById('signalWord');
+  const confidenceFill = document.getElementById('confidenceFill');
+  const confidenceLabel = document.getElementById('confidenceLabel');
+  const signalIndicator = document.getElementById('signalIndicator');
+  const reasoningText = document.getElementById('reasoningText');
+  const riskNote = document.getElementById('riskNote');
+  const spikeBadge = document.getElementById('spikeBadge');
+  const historyList = document.getElementById('historyList');
+  const winrateLabel = document.getElementById('winrateLabel');
+
+  function loadHistory() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveHistory(items) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    } catch (e) {
+      // storage unavailable, riwayat tidak akan tersimpan lintas sesi
+    }
+  }
+
+  function renderHistory() {
+    const items = loadHistory();
+    if (items.length === 0) {
+      historyList.innerHTML = '<div class="empty-state">Belum ada riwayat. Hitung sinyal untuk mulai mencatat.</div>';
+      winrateLabel.textContent = '— (0 ditandai)';
+      return;
+    }
+
+    const marked = items.filter(i => i.outcome);
+    const profitCount = marked.filter(i => i.outcome === 'profit').length;
+    winrateLabel.textContent = marked.length > 0
+      ? Math.round((profitCount / marked.length) * 100) + '% (' + marked.length + ' ditandai)'
+      : '— (0 ditandai)';
+
+    historyList.innerHTML = '';
+    items.slice().reverse().forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'history-item';
+      const outcomeHtml = item.outcome
+        ? '<span class="outcome-tag outcome-' + item.outcome + '">' + (item.outcome === 'profit' ? 'Profit' : 'Loss') + '</span>'
+        : '<button class="ghost profit" data-id="' + item.id + '" data-outcome="profit">Profit</button><button class="ghost loss" data-id="' + item.id + '" data-outcome="loss">Loss</button>';
+
+      const spikeTag = item.spike ? ' <span class="spike-badge show" style="font-size:0.62rem; padding:2px 7px;">⚡ SPIKE</span>' : '';
+      row.innerHTML = `
+        <div class="history-top">
+          <span class="history-signal ${item.signalClass}">${item.signal} · ${item.indicatorLabel}${spikeTag}</span>
+          <div class="history-actions">${outcomeHtml}</div>
+        </div>
+        <div class="history-meta">${item.time} &middot; aktual ${item.actual} vs forecast ${item.forecast} &middot; kekuatan ${item.confidence}%</div>
+      `;
+      historyList.appendChild(row);
+    });
+
+    historyList.querySelectorAll('button[data-outcome]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const outcome = btn.getAttribute('data-outcome');
+        const items = loadHistory();
+        const target = items.find(i => String(i.id) === String(id));
+        if (target) target.outcome = outcome;
+        saveHistory(items);
+        renderHistory();
+      });
+    });
+  }
+
+  document.getElementById('calcBtn').addEventListener('click', () => {
+    const indicatorKey = document.getElementById('indicator').value;
+    const actual = parseFloat(document.getElementById('actual').value);
+    const forecast = parseFloat(document.getElementById('forecast').value);
+
+    if (isNaN(actual) || isNaN(forecast)) {
+      reasoningText.textContent = 'Isi kolom Aktual dan Forecast dengan angka dulu.';
+      return;
+    }
+
+    const rule = usdRules[indicatorKey];
+    const diff = actual - forecast;
+    const magnitude = forecast !== 0 ? Math.abs(diff / forecast) : Math.abs(diff);
+    const weightedMagnitude = magnitude * rule.weight;
+
+    let usdDirection = 'netral';
+    if (diff > 0) usdDirection = rule.bullishOnBeat ? 'bullish' : 'bearish';
+    else if (diff < 0) usdDirection = rule.bullishOnBeat ? 'bearish' : 'bullish';
+
+    let xauSignal = 'NETRAL';
+    let xauClass = 'neutral';
+    if (usdDirection === 'bullish') { xauSignal = 'SELL'; xauClass = 'sell'; }
+    else if (usdDirection === 'bearish') { xauSignal = 'BUY'; xauClass = 'buy'; }
+
+    const confidence = diff === 0 ? 10 : Math.min(90, Math.round(20 + weightedMagnitude * 500 + rule.weight * 15));
+
+    signalWord.textContent = xauSignal;
+    signalWord.className = 'signal-word ' + xauClass;
+    confidenceFill.className = 'confidence-fill ' + xauClass;
+    confidenceFill.style.width = confidence + '%';
+    confidenceLabel.textContent = confidence + '%';
+    signalIndicator.textContent = indicatorLabels[indicatorKey] + ': aktual ' + actual + ' vs forecast ' + forecast;
+
+    const dirText = diff > 0 ? 'lebih tinggi' : (diff < 0 ? 'lebih rendah' : 'sama dengan');
+    const isSpike = rule.weight >= SPIKE_WEIGHT_THRESHOLD && magnitude >= SPIKE_MAGNITUDE_THRESHOLD;
+
+    reasoningText.textContent = indicatorLabels[indicatorKey] + ' rilis ' + dirText + ' dari forecast, sehingga USD cenderung ' + usdDirection + '. Karena XAU/USD biasanya bergerak berlawanan arah dengan kekuatan USD, sinyal untuk gold adalah ' + xauSignal + '.'
+      + (isSpike ? ' Selisih dari forecast cukup besar untuk indikator high-impact ini — pergerakan harga awal berpotensi berupa spike tajam, bukan tren halus.' : '');
+
+    if (rule.weight >= HIGH_IMPACT_THRESHOLD) {
+      riskNote.classList.add('show');
+    } else {
+      riskNote.classList.remove('show');
+    }
+
+    spikeBadge.classList.toggle('show', isSpike);
+
+    const items = loadHistory();
+    items.push({
+      id: Date.now(),
+      time: new Date().toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }),
+      indicatorLabel: indicatorLabels[indicatorKey],
+      actual: actual,
+      forecast: forecast,
+      signal: xauSignal,
+      signalClass: xauClass,
+      confidence: confidence,
+      spike: isSpike,
+      outcome: null
+    });
+    saveHistory(items);
+    renderHistory();
+  });
+
+  // Kalender fallback (dipakai kalau calendar.json tidak tersedia — misalnya saat dibuka di
+  // pratinjau Claude ini). Update manual tiap minggu kalau tidak pakai pipeline GitHub Actions.
+  const fallbackCalendarData = [
+    { when: 'Rab 19:30', name: 'Retail Sales m/m (Aug) — forecast 0.4%, prev -0.4%', impact: 'high' },
+    { when: 'Kam 01:00', name: 'Fed Interest Rate Decision — forecast 4.00%, prev 3.75%', impact: 'high' },
+    { when: 'Kam 01:30', name: 'Fed Press Conference (Powell)', impact: 'high' },
+    { when: 'Kam 19:30', name: 'Initial Jobless Claims — forecast 205K, prev 206K', impact: 'high' },
+    { when: 'Kam 19:30', name: 'Housing Starts (Aug) — forecast 1.31M, prev 1.239M', impact: 'med' },
+    { when: 'Kam 19:30', name: 'Building Permits (Aug) — forecast 1.41M, prev 1.433M', impact: 'med' }
+  ];
+
+  const calendarList = document.getElementById('calendarList');
+  const calendarStatus = document.getElementById('calendarStatus');
+
+  function renderCalendar(items, isLive) {
+    calendarList.innerHTML = '';
+    items.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'cal-item';
+      row.innerHTML = `
+        <div class="cal-when">${item.when}</div>
+        <div class="cal-name">${item.name}</div>
+        <div class="cal-impact ${item.impact === 'high' ? 'impact-high' : 'impact-med'}">${item.impact === 'high' ? 'high impact' : 'medium'}</div>
+      `;
+      calendarList.appendChild(row);
+    });
+    if (calendarStatus) {
+      calendarStatus.textContent = isLive
+        ? 'Live dari calendar.json (diperbarui bot GitHub Actions)'
+        : 'Data fallback manual — calendar.json tidak terbaca di sini';
+    }
+  }
+
+  // Coba ambil calendar.json (hanya berhasil kalau file ini di-host bareng di GitHub Pages
+  // yang sama; di pratinjau Claude ini permintaan akan gagal dan otomatis pakai fallback).
+  fetch('calendar.json')
+    .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
+    .then(json => renderCalendar(json.events || fallbackCalendarData, true))
+    .catch(() => renderCalendar(fallbackCalendarData, false));
+
+  renderHistory();
+</script>
+</body>
+</html>
